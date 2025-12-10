@@ -1,4 +1,3 @@
-// simulation.go
 package main
 
 import (
@@ -6,28 +5,29 @@ import (
 	"time"
 )
 
-// CrearCoches genera num coches alternando los tipos de incidencia
-// (mecánica, eléctrica y carrocería) para tener las tres prioridades.
+// CrearCoches genera num coches con tipos de incidencia aleatorios
+// (mecánica, eléctrica, carrocería) para que haya mezcla de prioridades.
 func CrearCoches(num int) []*Coche {
 	coches := make([]*Coche, 0, num)
 	idInc := 1
 
 	for i := 0; i < num; i++ {
+		// Elegimos tipo aleatorio entre las tres categorias.
 		var tipo string
-		switch i % 3 {
+		r := rng.Intn(3)
+		switch r {
 		case 0:
-			tipo = TipoMecanica // prioridad alta, 5 s
+			tipo = TipoMecanica
 		case 1:
-			tipo = TipoElectrica // prioridad media, 3 s
+			tipo = TipoElectrica
 		default:
-			tipo = TipoCarroceria // prioridad baja, 1 s
+			tipo = TipoCarroceria
 		}
 
 		inc := NuevaIncidencia(idInc, tipo, "")
 		idInc++
 
 		matricula := fmt.Sprintf("CAR%03d", i+1)
-
 		coche := NuevoCoche(matricula, inc)
 		coches = append(coches, coche)
 	}
@@ -43,11 +43,11 @@ func EjecutarEscenarioRW(numCoches, numPlazas, numMecanicos int) {
 	fmt.Printf(" Coches=%d  Plazas=%d  Mecanicos=%d\n", numCoches, numPlazas, numMecanicos)
 	fmt.Println("======================================")
 
-	// Crear taller y coches
+	IniciarTiempoPrograma()
+
 	taller := NuevoTaller(numCoches, numPlazas, numMecanicos)
 	coches := CrearCoches(numCoches)
 
-	// Medir tiempo total de la simulación
 	inicio := time.Now()
 	SimularTallerRW(taller, coches)
 	fin := time.Now()
@@ -69,6 +69,8 @@ func EjecutarEscenarioWG(numCoches, numPlazas, numMecanicos int) {
 	fmt.Println(" Simulación con WaitGroup")
 	fmt.Printf(" Coches=%d  Plazas=%d  Mecanicos=%d\n", numCoches, numPlazas, numMecanicos)
 	fmt.Println("======================================")
+
+	IniciarTiempoPrograma()
 
 	taller := NuevoTaller(numCoches, numPlazas, numMecanicos)
 	coches := CrearCoches(numCoches)

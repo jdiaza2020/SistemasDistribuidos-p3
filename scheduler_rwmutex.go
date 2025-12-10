@@ -1,4 +1,3 @@
-// scheduler_rwmutex.go
 package main
 
 import (
@@ -59,12 +58,9 @@ func (s *SchedulerRW) enviarCochesAFaseInicial(coches []*Coche) {
 }
 
 // workerFase representa a un "trabajador" de una fase concreta del taller.
-// Cada worker:
-//  1. Saca el siguiente coche de la cola de su fase.
-//  2. Simula el tiempo de trabajo según la prioridad.
-//  3. Envía el coche a la siguiente fase o marca como terminado si está en la última.
 func (s *SchedulerRW) workerFase(indFase int) {
 	f := s.Taller.Fases[indFase]
+	nombreFase := f.Nombre
 
 	for {
 		// 1) Sacar siguiente coche de la cola de esta fase.
@@ -81,10 +77,15 @@ func (s *SchedulerRW) workerFase(indFase int) {
 			continue
 		}
 
-		// 2) Simular el tiempo de trabajo en esta fase.
-		// El tiempo por fase viene dado por la incidencia (5, 3 o 1 segundos).
-		tiempo := coche.Incidencia.TiempoPorFase
-		time.Sleep(time.Duration(tiempo) * time.Second)
+		// Log de entrada a la fase.
+		LogEvento(coche, nombreFase, "ENTRA")
+
+		// 2) Simular el tiempo de trabajo en esta fase con variación.
+		base := coche.Incidencia.TiempoPorFase
+		time.Sleep(TiempoConVariacion(base))
+
+		// Log de salida de la fase.
+		LogEvento(coche, nombreFase, "SALE")
 
 		// 3) Pasar a la siguiente fase o marcar como terminado.
 		if indFase == FaseEntrega {

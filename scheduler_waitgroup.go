@@ -1,4 +1,3 @@
-// scheduler_waitgroup.go
 package main
 
 import (
@@ -37,6 +36,7 @@ func SimularTallerWG(t *Taller, coches []*Coche) {
 			continue
 		}
 
+		nombreFase := faseTaller.Nombre
 		capacidad := faseTaller.Capacidad
 		if capacidad <= 0 {
 			capacidad = 1
@@ -59,16 +59,22 @@ func SimularTallerWG(t *Taller, coches []*Coche) {
 			for j := i; j < fin; j++ {
 				c := coches[j]
 
-				go func(c *Coche, faseActual int) {
-					// Simulamos el trabajo de esta fase.
-					tiempo := c.Incidencia.TiempoPorFase
-					time.Sleep(time.Duration(tiempo) * time.Second)
+				go func(c *Coche, faseActual int, nombreFase string) {
+					// Log de entrada a la fase.
+					LogEvento(c, nombreFase, "ENTRA")
+
+					// Simulamos el trabajo de esta fase con variación.
+					base := c.Incidencia.TiempoPorFase
+					time.Sleep(TiempoConVariacion(base))
 
 					// Actualizamos la fase en la que se encuentra el coche.
 					c.FaseActual = faseActual
 
+					// Log de salida de la fase.
+					LogEvento(c, nombreFase, "SALE")
+
 					wg.Done()
-				}(c, fase)
+				}(c, fase, nombreFase)
 			}
 
 			// Esperamos a que terminen todas las goroutines de este bloque.

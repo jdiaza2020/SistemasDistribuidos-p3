@@ -1,4 +1,3 @@
-// queue.go
 package main
 
 // EncolarCochePrioridad mete un coche en la cola de la fase

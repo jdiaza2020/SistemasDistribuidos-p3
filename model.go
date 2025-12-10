@@ -1,4 +1,3 @@
-// model.go
 package main
 
 // Constantes para las fases del taller.
@@ -36,7 +35,7 @@ type Incidencia struct {
 
 // Coche representa un vehículo que pasa por las 4 fases del taller.
 type Coche struct {
-	Matricula string
+	Matricula  string
 	Incidencia *Incidencia
 	FaseActual int // 0..3 según la fase en la que esté
 }
